@@ -2,6 +2,7 @@ import os
 import sys
 import gc
 import re
+import requests
 
 
 class Node:
@@ -41,8 +42,38 @@ class NodeList:
         gc.collect()
 
 
-# Some Helper Functions
+class Issues(Node):
+    def __init__(self, prev, curr, Next, text):
+        Node.__init__(self, prev, curr, Next, text)
+        self.end = False
 
+    def get_base(self, url):
+        _ = requests.compat.urljoin(url, '.')
+        if _ == url: return "end"
+        return requests.compat.urljoin(_, '/.')
+
+    def validate_response(self, base):
+        if self.get_base(self.curr) != base:
+            self.text = "Invalid link, Try again with a valid link."
+            self.end = True
+
+        elif self.get_base(self.prev) == "end":
+            self.text = self.text + "\n\n\nSorry there is no previous chapter or the previous chapter is broken :(\nPress Next to continue reading."
+            self.end = True
+
+        elif self.get_base(self.next) == "end":
+            self.text = self.text + "\n\n\nSorry there is no next chapter(yet?) or the next chapter is broken!\nTry going back :("
+            self.end = True
+
+        elif self.text == '' or self.text is None or len(self.text) <= 100:
+            self.text = "The Link is broken :(\nTry again with a valid link."
+            self.end = True
+
+        else:
+            self.end = False
+
+
+#Some Helper Functions
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
