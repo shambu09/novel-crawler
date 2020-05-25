@@ -43,7 +43,6 @@ class NovelsCrawlSpider:
 
         if not self.issueTracker.end:
             self.get_response()
-            print(self.response)
             self.issueTracker.validate_response(self.response)
             # converting html to some delicious soup!
             if self.issueTracker.net:
@@ -76,5 +75,3 @@ class NovelsCrawlSpider:
         save_text(self.paths.text, self.issueTracker.text)
         save_text(self.paths.next, self.issueTracker.next)
         save_text(self.paths.prev, self.issueTracker.prev)
-
-        # self.response = None

@@ -110,9 +110,11 @@ class MainWindow(QMainWindow):
         self.crawler.issueTracker.is_next = True
         self.crawler.issueTracker.is_prev = False
         self.crawler.issueTracker.nextTemp = self.link
-        if self.cache.isCached(self.next):
+        if self.cache.isCached(self.next) and self.crawler.issueTracker.net:
             self.temp_node = self.cache.get_node(self.next)
             self.put_links(self.temp_node)
+            print("next")
+            # print(self.cache.tracker)
 
         else:
             if self.next != "":
@@ -124,9 +126,10 @@ class MainWindow(QMainWindow):
         self.crawler.issueTracker.is_next = False
         self.crawler.issueTracker.is_prev = True
         self.crawler.issueTracker.prevTemp = self.link
-        if self.cache.isCached(self.prev):
+        if self.cache.isCached(self.prev) and self.crawler.issueTracker.net:
             self.temp_node = self.cache.get_node(self.prev)
             self.put_links(self.temp_node)
+            print("prev")
 
         else:
             if self.prev != "":
@@ -154,16 +157,18 @@ class MainWindow(QMainWindow):
         self.cache.clear_all()
 
     def file_open(self):
+        print(self.cache.tracker)
+
         with open(self.text_path, "r", encoding="utf-8") as f:
             text = f.read()
 
         self.editor.setPlainText(text)
         self.get_links()
 
+        if self.crawler.issueTracker.net:
+            self.cache.add_node(Node(self.prev, self.link, self.next, text))
+
         self.cache.garbage_collect()
-
-        self.cache.add_node(Node(self.prev, self.link, self.next, text))
-
         gc.collect()
 
     def file_print(self):

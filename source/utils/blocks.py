@@ -20,7 +20,7 @@ class NodeList:
         self.threshold = 50
 
     def add_node(self, node):
-        if node.curr not in self.tracker and node.curr is not None:
+        if node.curr not in self.tracker and node.curr is not None and node.curr != '':
             self.list.append(node)
             self.tracker.append(node.curr)
 
@@ -58,20 +58,15 @@ class Issues(Node):
         if _ == url: return "end"
         return requests.compat.urljoin(_, '/.')
 
-    # def validate_response(self, response):
-    # if response == None:
-    #     self.text = "Connectivity issue :(\ntry again with a active connection."
-    #     if self.prev == None:
-    #         self.prev = ''
+    def validate_response(self, response):
+        if response == None:
+            self.text = "No connection :)"
+            self.prev = ''
+            self.next = ''
+            self.net = False
 
-    #     if self.next == None:
-    #         self.next = ''
-    #     self.end = True
-    #     self.net = False
-    #     print("yes")
-
-    # else:
-    #     self.net = True
+        else:
+            self.net = True
 
     def validate_links(self, base):
         if self.get_base(self.curr) != base:
@@ -85,7 +80,6 @@ class Issues(Node):
                     self.next = ''
 
                 else:
-                    self.next = ''
                     self.prev = self.temp
 
             elif self.is_prev:
