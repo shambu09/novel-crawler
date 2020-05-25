@@ -34,6 +34,8 @@ class MainWindow(QMainWindow):
         self.cache.threshold = 40
         self.temp_node = None
         self.clearDummy = ''
+        self.crawler.issueTracker.is_next = False
+        self.crawler.issueTracker.is_prev = False
 
         fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedfont.setPointSize(12)
@@ -90,18 +92,24 @@ class MainWindow(QMainWindow):
         self.show()
 
     def takeinputs(self):
-        link, done1 = QInputDialog.getText(
+        self.crawler.issueTracker.temp = self.link
+        self.crawler.issueTracker.is_next = False
+        self.crawler.issueTracker.is_prev = False
+        link, done = QInputDialog.getText(
             self, 'Input Dialog',
             'Enter your link:                                                                '
         )
 
-        if done1:
+        if done:
             self.link = link
             self.crawler.parse(self.link)
             save_text(resource_path(r"temp\knil.cus"), self.link)
             self.file_open()
 
     def next_change(self):
+        self.crawler.issueTracker.is_next = True
+        self.crawler.issueTracker.is_prev = False
+        self.crawler.issueTracker.nextTemp = self.link
         if self.cache.isCached(self.next):
             self.temp_node = self.cache.get_node(self.next)
             self.put_links(self.temp_node)
@@ -113,6 +121,9 @@ class MainWindow(QMainWindow):
         self.file_open()
 
     def prev_change(self):
+        self.crawler.issueTracker.is_next = False
+        self.crawler.issueTracker.is_prev = True
+        self.crawler.issueTracker.prevTemp = self.link
         if self.cache.isCached(self.prev):
             self.temp_node = self.cache.get_node(self.prev)
             self.put_links(self.temp_node)
@@ -152,6 +163,8 @@ class MainWindow(QMainWindow):
         self.cache.garbage_collect()
 
         self.cache.add_node(Node(self.prev, self.link, self.next, text))
+
+        gc.collect()
 
     def file_print(self):
         dlg = QPrintDialog()

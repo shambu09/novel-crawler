@@ -46,26 +46,65 @@ class Issues(Node):
     def __init__(self, prev, curr, Next, text):
         Node.__init__(self, prev, curr, Next, text)
         self.end = False
+        self.is_next = False
+        self.is_prev = False
+        self.nextTemp = None
+        self.prevTemp = None
+        self.temp = ''
+        self.net = True
 
     def get_base(self, url):
         _ = requests.compat.urljoin(url, '.')
         if _ == url: return "end"
         return requests.compat.urljoin(_, '/.')
 
-    def validate_response(self, base):
+    # def validate_response(self, response):
+    # if response == None:
+    #     self.text = "Connectivity issue :(\ntry again with a active connection."
+    #     if self.prev == None:
+    #         self.prev = ''
+
+    #     if self.next == None:
+    #         self.next = ''
+    #     self.end = True
+    #     self.net = False
+    #     print("yes")
+
+    # else:
+    #     self.net = True
+
+    def validate_links(self, base):
         if self.get_base(self.curr) != base:
-            self.text = "Invalid link, Try again with a valid link."
+            if not (self.is_next or self.is_prev):
+                self.text = "Invalid link, Try again with a valid link."
+
+                if self.prev == None:
+                    self.prev = ''
+
+                if self.next == None:
+                    self.next = ''
+
+                else:
+                    self.next = ''
+                    self.prev = self.temp
+
+            elif self.is_prev:
+                self.text = "Sorry there is no chapter or the chapter is broken :(\nPress Next to continue reading."
+                self.next = self.prevTemp
+                self.prev = ''
+
+            else:
+                self.text = "Sorry there is no chapter(yet?) or the chapter is broken!\nTry going back :("
+                self.prev = self.nextTemp
+                self.next = ''
+
             self.end = True
 
-        elif self.get_base(self.prev) == "end":
-            self.text = self.text + "\n\n\nSorry there is no previous chapter or the previous chapter is broken :(\nPress Next to continue reading."
-            self.end = True
+        else:
+            self.end = False
 
-        elif self.get_base(self.next) == "end":
-            self.text = self.text + "\n\n\nSorry there is no next chapter(yet?) or the next chapter is broken!\nTry going back :("
-            self.end = True
-
-        elif self.text == '' or self.text is None or len(self.text) <= 100:
+    def validate_text(self):
+        if self.text == '' or self.text is None or len(self.text) <= 100:
             self.text = "The Link is broken :(\nTry again with a valid link."
             self.end = True
 
