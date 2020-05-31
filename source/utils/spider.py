@@ -32,7 +32,6 @@ class NovelsCrawlSpider:
 
         except requests.exceptions.ConnectionError:
             self.manager.error502 = True
-            print("hey")
 
     def parse(self, link=None):
         if link is not None:
@@ -68,6 +67,16 @@ class NovelsCrawlSpider:
             self.manager.badGateway()
             self.manager.curr = self.url
             save_text(self.paths.text, self.manager.text)
+            if self.manager.temp is not None:
+                if self.manager.pressedNext:
+                    save_text(self.paths.prev, self.manager.temp)
+                    save_text(self.paths.next, '')
+                elif self.manager.pressedPrev:
+                    save_text(self.paths.next, self.manager.temp)
+                    save_text(self.paths.prev, '')
+                else:
+                    save_text(self.paths.prev, '')
+                    save_text(self.paths.next, '')
 
     def saveFiles(self, prev, curr, Next, text):
         save_text(self.paths.prev, prev)

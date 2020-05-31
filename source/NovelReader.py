@@ -90,18 +90,26 @@ class MainWindow(QMainWindow):
         self.show()
 
     def takeinputs(self):
-        link, done1 = QInputDialog.getText(
+        link, done = QInputDialog.getText(
             self, 'Input Dialog',
             'Enter your link:                                                                '
         )
 
-        if done1:
+        if done:
             self.link = link
-            self.crawler.parse(self.link)
-            save_text(resource_path(r"temp\knil.cus"), self.link)
+            if self.cache.isCached(self.link):
+                self.temp_node = self.cache.get_node(self.link)
+                self.put_links(self.temp_node)
+
+            else:
+                self.crawler.parse(self.link)
+                save_text(resource_path(r"temp\knil.cus"), self.link)
             self.file_open()
 
     def next_change(self):
+        self.crawler.manager.temp = self.link
+        self.crawler.manager.pressedNext = True
+        self.crawler.manager.pressedPrev = False
         if self.cache.isCached(self.next):
             self.temp_node = self.cache.get_node(self.next)
             self.put_links(self.temp_node)
@@ -113,6 +121,9 @@ class MainWindow(QMainWindow):
         self.file_open()
 
     def prev_change(self):
+        self.crawler.manager.temp = self.link
+        self.crawler.manager.pressedNext = False
+        self.crawler.manager.pressedPrev = True
         if self.cache.isCached(self.prev):
             self.temp_node = self.cache.get_node(self.prev)
             self.put_links(self.temp_node)

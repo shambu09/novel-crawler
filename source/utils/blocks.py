@@ -45,6 +45,9 @@ class Manager(Node):
     def __init__(self, prev, curr, Next, text):
         Node.__init__(self, prev, curr, Next, text)
         self.error502 = False
+        self.temp = None
+        self.pressedNext = False
+        self.pressedPrev = False
 
     def badGateway(self):
         self.prev = ''
