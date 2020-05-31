@@ -27,7 +27,8 @@ class MainWindow(QMainWindow):
         self.link_path = resource_path(r"temp\knil.cus")
         self.next_path = resource_path(r"temp\txen.cus")
 
-        self.paths = Node(self.prev_path,self.link_path,self.next_path,self.text_path)
+        self.paths = Node(self.prev_path, self.link_path, self.next_path,
+                          self.text_path)
         self.crawler = NovelsCrawlSpider(self.paths)
         self.cache = NodeList()
         self.cache.threshold = 40
@@ -90,7 +91,9 @@ class MainWindow(QMainWindow):
 
     def takeinputs(self):
         link, done1 = QInputDialog.getText(
-            self, 'Input Dialog', 'Enter your link:                                                                ')
+            self, 'Input Dialog',
+            'Enter your link:                                                                '
+        )
 
         if done1:
             self.link = link
@@ -148,7 +151,8 @@ class MainWindow(QMainWindow):
 
         self.cache.garbage_collect()
 
-        self.cache.add_node(Node(self.prev, self.link, self.next, text))
+        if not self.crawler.manager.error502:
+            self.cache.add_node(Node(self.prev, self.link, self.next, text))
 
     def file_print(self):
         dlg = QPrintDialog()
@@ -162,4 +166,3 @@ window = MainWindow()
 window.showMaximized()
 app.exec_()
 window.cache.clear_all()
-

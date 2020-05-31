@@ -41,7 +41,19 @@ class NodeList:
         gc.collect()
 
 
+class Manager(Node):
+    def __init__(self, prev, curr, Next, text):
+        Node.__init__(self, prev, curr, Next, text)
+        self.error502 = False
+
+    def badGateway(self):
+        self.prev = ''
+        self.next = ''
+        self.text = 'Error 502 : Bad Gateway'
+
+
 # Some Helper Functions
+
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
