@@ -2,9 +2,11 @@ import os
 import sys
 import gc
 import re
+import requests
 
 
 class Node:
+
     def __init__(self, prev, curr, Next, text):
         self.prev = prev
         self.curr = curr
@@ -13,6 +15,7 @@ class Node:
 
 
 class NodeList:
+
     def __init__(self):
         self.list = []
         self.tracker = []
@@ -42,17 +45,24 @@ class NodeList:
 
 
 class Manager(Node):
+
     def __init__(self, prev, curr, Next, text):
         Node.__init__(self, prev, curr, Next, text)
         self.error502 = False
         self.temp = None
         self.pressedNext = False
         self.pressedPrev = False
+        self.domain_url = None
 
     def badGateway(self):
         self.prev = ''
         self.next = ''
         self.text = 'Error 502 : Bad Gateway'
+
+    def validate_url(self, url):
+        u = requests.compat.urljoin(url, '/')
+        u = requests.compat.urljoin(u, '/')
+        return u == self.domain_url
 
 
 # Some Helper Functions

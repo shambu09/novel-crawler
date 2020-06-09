@@ -22,6 +22,7 @@ class NovelsCrawlSpider:
         self.prevLink = None
         self.paths = node
         self.manager = Manager(None, self.url, None, None)
+        self.manager.domain_url = 'https://m.wuxiaworld.co/'
         self.text = None
 
     def get_response(self):

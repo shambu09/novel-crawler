@@ -11,6 +11,7 @@ from utils import *
 
 
 class MainWindow(QMainWindow):
+
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
@@ -97,14 +98,18 @@ class MainWindow(QMainWindow):
 
         if done:
             self.link = link
-            if self.cache.isCached(self.link):
-                self.temp_node = self.cache.get_node(self.link)
-                self.put_links(self.temp_node)
+            if self.crawler.manager.validate_url(link):
+                if self.cache.isCached(self.link):
+                    self.temp_node = self.cache.get_node(self.link)
+                    self.put_links(self.temp_node)
 
+                else:
+                    self.crawler.parse(self.link)
+                    save_text(resource_path(r"temp\knil.cus"), self.link)
+                self.file_open()
             else:
-                self.crawler.parse(self.link)
-                save_text(resource_path(r"temp\knil.cus"), self.link)
-            self.file_open()
+                save_text(self.text_path, "Invalid Link")
+                self.file_open()
 
     def next_change(self):
         self.crawler.manager.temp = self.link
